@@ -1,0 +1,42 @@
+import java.io.IOException;
+
+import org.jibble.pircbot.IrcException;
+
+public class Main 
+{
+    public static void main(String[] args) throws Exception
+    {
+    	IRCBot bot = new IRCBot("DustinChatBot");
+    	bot.setVerbose(true);
+    	bot.connect("irc.freenode.net"); // which website to join
+    	bot.joinChannel("#pircbotbyDustin"); // which channel to join
+    	
+    	
+    	
+    	while (!bot.isConnected()) 
+    	{
+    		try 
+    		{
+    			bot.connect("irc.freenode.net"); // final server
+    			bot.joinChannel("#pircbotbyDustin");
+    		} 
+
+    		catch (IOException | IrcException exi) 
+    		{
+		    	exi.printStackTrace();
+		    	try 
+		    	{
+		    		Thread.sleep(5000);
+		    	} 
+		    	catch (InterruptedException exin) // Catch if error exists
+		    	{
+		    		Thread.currentThread().interrupt();
+		    		System.out.println("An exception has occurred.");
+		    		bot.disconnect();
+		    	}
+    		}
+    	}
+    	
+    }
+}
+
