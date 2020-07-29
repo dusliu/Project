@@ -1,0 +1,56 @@
+import java.io.IOException;
+
+
+import org.jibble.pircbot.PircBot;
+
+public class IRCBot extends PircBot
+{
+	public IRCBot(String s) // Constructor for bot
+	{
+		this.setName(s);
+		
+	}
+    
+	public void onMessage(String channel, String sender, String login, String hostName, String message) 
+	{
+		String [] info = message.split(" ");
+		if (info.length >= 1)
+		{
+					switch(info[0].toLowerCase())
+					{
+					case ("help"):	// When user enters help	
+							sendMessage(channel, "Enter \"time\" to get the current time");
+							sendMessage(channel, "Enter \"weather\" followed by city name or zip code (for cities in US) to get weather");
+						break;
+					case ("time"): // User enters time
+							String time = new java.util.Date().toString();
+							sendMessage(channel, "The time is now " + time);
+						break;
+						
+					case ("weather"): // User wants to weather
+							if(info.length >= 2)
+							{
+								String cityName = info[1];
+								try
+								{
+									Weather cityWeather = new Weather(cityName);
+									sendMessage(channel, "The current temperature in " + cityName + " is " + cityWeather.getTemperature() + cityWeather.getTempUnit() + " with a high of " + cityWeather.getHighTemp() + cityWeather.getTempUnit() + " and a low of " + cityWeather.getLowTemp() + cityWeather.getTempUnit());
+								}
+								catch(BadAPIKeyException e1) // If bad API Key
+								{
+									sendMessage(channel, e1.toString());
+								}
+								catch (InvalidCityException e2) // If invalid city
+								{
+									sendMessage(channel, e2.toString());
+								}
+								catch (IOException e3) // If an I/O exception has occurred
+								{
+									sendMessage(channel, e3.toString());			
+								}
+							}
+					break;					
+			}	
+			}
+		}
+}
